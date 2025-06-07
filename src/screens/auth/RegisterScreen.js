@@ -1,18 +1,46 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button, Input, Text } from '@rneui/themed';
+import React, { useState } from 'react';
+import { View, StyleSheet, TextInput, Button, Alert } from 'react-native';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../firebase/config';
 
 export default function RegisterScreen({ navigation }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleRegister = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Completa todos los campos');
+      return;
+    }
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      Alert.alert('¡Registro exitoso!');
+    } catch (error) {
+      Alert.alert('Error en registro', error.message);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text h3 style={styles.title}>Registro</Text>
-      <Input placeholder="Email" />
-      <Input placeholder="Contraseña" secureTextEntry />
-      <Input placeholder="Confirmar Contraseña" secureTextEntry />
-      <Button title="Registrarse" containerStyle={styles.button} />
-      <Button 
-        title="¿Ya tienes cuenta? Inicia sesión" 
-        type="clear"
+      <TextInput
+        placeholder="Correo electrónico"
+        style={styles.input}
+        onChangeText={setEmail}
+        value={email}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder="Contraseña"
+        style={styles.input}
+        onChangeText={setPassword}
+        value={password}
+        secureTextEntry
+      />
+      <Button title="Registrarse" onPress={handleRegister} />
+      <Button
+        title="¿Ya tienes cuenta? Inicia sesión"
         onPress={() => navigation.navigate('Login')}
       />
     </View>
@@ -21,15 +49,13 @@ export default function RegisterScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 20,
+    flex: 1,
     justifyContent: 'center',
   },
-  title: {
-    textAlign: 'center',
-    marginBottom: 30,
-  },
-  button: {
-    marginVertical: 10,
+  input: {
+    borderBottomWidth: 1,
+    padding: 10,
+    marginBottom: 15,
   },
 });

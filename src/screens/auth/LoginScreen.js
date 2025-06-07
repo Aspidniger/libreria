@@ -1,17 +1,45 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button, Input, Text } from '@rneui/themed';
+import React, { useState } from 'react';
+import { View, StyleSheet, TextInput, Button, Alert } from 'react-native';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../firebase/config';
 
 export default function LoginScreen({ navigation }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Completa todos los campos');
+      return;
+    }
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      Alert.alert('Error al iniciar sesión', error.message);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text h3 style={styles.title}>Iniciar Sesión</Text>
-      <Input placeholder="Email" />
-      <Input placeholder="Contraseña" secureTextEntry />
-      <Button title="Iniciar Sesión" containerStyle={styles.button} />
-      <Button 
-        title="¿No tienes cuenta? Regístrate" 
-        type="clear"
+      <TextInput
+        placeholder="Correo electrónico"
+        style={styles.input}
+        onChangeText={setEmail}
+        value={email}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder="Contraseña"
+        style={styles.input}
+        onChangeText={setPassword}
+        value={password}
+        secureTextEntry
+      />
+      <Button title="Iniciar sesión" onPress={handleLogin} />
+      <Button
+        title="¿No tienes cuenta? Regístrate"
         onPress={() => navigation.navigate('Register')}
       />
     </View>
@@ -20,15 +48,13 @@ export default function LoginScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 20,
+    flex: 1,
     justifyContent: 'center',
   },
-  title: {
-    textAlign: 'center',
-    marginBottom: 30,
-  },
-  button: {
-    marginVertical: 10,
+  input: {
+    borderBottomWidth: 1,
+    padding: 10,
+    marginBottom: 15,
   },
 });
