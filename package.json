@@ -20,7 +20,7 @@
     "firebase": "^11.9.0",
     "react": "19.0.0",
     "react-native": "0.79.3",
-    "react-native-safe-area-context": "^4.14.1",
+    "react-native-safe-area-context": "^4.4.1",
     "react-native-screens": "~4.11.1"
   },
   "devDependencies": {
